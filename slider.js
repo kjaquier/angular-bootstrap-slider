@@ -14,6 +14,10 @@ angular.module('ui.bootstrap-slider', [])
                 ngDisabled: '=',
                 range: '=',
                 sliderid: '=',
+                ticks: '&',
+                ticksPositions: '&',
+                ticksLabels: '&',
+                ticksSnapBounds: '&',
                 formatter: '&',
                 onStartSlide: '&',
                 onStopSlide: '&',
@@ -41,6 +45,12 @@ angular.module('ui.bootstrap-slider', [])
 
                     function getArrayOrValue(value) {
                         return (angular.isString(value) && value.indexOf("[") === 0) ? angular.fromJson(value) : value;
+                    }
+
+                    function evalAttr(scopeKey, optionKey) {
+                        if ($scope[scopeKey]) {
+                            options[optionKey || scopeKey] = $scope.$eval($scope[scopeKey]);
+                        }
                     }
 
                     setOption('id', $scope.sliderid);
@@ -95,7 +105,11 @@ angular.module('ui.bootstrap-slider', [])
                         setFloatOption('value', $scope.value, 5);
                     }
 
-                    if ($scope.formatter) options.formatter = $scope.$eval($scope.formatter);
+                    evalAttr('formatter');
+                    evalAttr('ticks');
+                    evalAttr('ticksPositions', 'ticks_positions');
+                    evalAttr('ticksLabels', 'ticks_labels');
+                    evalAttr('ticksSnapBounds', 'ticks_snap_bounds');
 
                     var slider = $(element).find(".slider-input").eq(0);
 
