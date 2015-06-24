@@ -17,7 +17,7 @@ angular.module('ui.bootstrap-slider', [])
                 ticks: '&',
                 ticksPositions: '&',
                 ticksLabels: '&',
-                ticksSnapBounds: '&',
+                ticksSnapBounds: '=',
                 formatter: '&',
                 onStartSlide: '&',
                 onStopSlide: '&',
@@ -109,7 +109,7 @@ angular.module('ui.bootstrap-slider', [])
                     evalAttr('ticks');
                     evalAttr('ticksPositions', 'ticks_positions');
                     evalAttr('ticksLabels', 'ticks_labels');
-                    evalAttr('ticksSnapBounds', 'ticks_snap_bounds');
+                    setFloatOption('ticks_snap_bounds', $scope.ticksSnapBounds, 0);
 
                     var slider = $(element).find(".slider-input").eq(0);
 
@@ -190,7 +190,11 @@ angular.module('ui.bootstrap-slider', [])
                         // deregister ngModel watcher to prevent memory leaks
                         if (angular.isFunction(ngModelDeregisterFn)) ngModelDeregisterFn();
                         ngModelDeregisterFn = $scope.$watch('ngModel', function (value) {
-                            slider.slider('setValue', parseFloat(value));
+                            if (!angular.isArray(value)) {
+                                slider.slider('setValue', parseFloat(value));
+                            } else {
+                                slider.slider('setValue', value);
+                            }
                         }, true);
                     }
                 }
