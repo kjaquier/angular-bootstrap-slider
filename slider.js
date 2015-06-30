@@ -14,9 +14,9 @@ angular.module('ui.bootstrap-slider', [])
                 ngDisabled: '=',
                 range: '=',
                 sliderid: '=',
-                ticks: '&',
-                ticksPositions: '&',
-                ticksLabels: '&',
+                ticks: '=',
+                ticksPositions: '=',
+                ticksLabels: '=',
                 ticksSnapBounds: '=',
                 formatter: '&',
                 onStartSlide: '&',
@@ -106,9 +106,9 @@ angular.module('ui.bootstrap-slider', [])
                     }
 
                     evalAttr('formatter');
-                    evalAttr('ticks');
-                    evalAttr('ticksPositions', 'ticks_positions');
-                    evalAttr('ticksLabels', 'ticks_labels');
+                    setOption('ticks', $scope.ticks, []);
+                    setOption('ticks_positions', $scope.ticksPositions, []);
+                    setOption('ticks_labels', $scope.ticksLabels, []);
                     setFloatOption('ticks_snap_bounds', $scope.ticksSnapBounds, 0);
 
                     var slider = $(element).find(".slider-input").eq(0);
@@ -199,11 +199,13 @@ angular.module('ui.bootstrap-slider', [])
                     }
                 }
 
-                var watchers = ['min', 'max', 'step', 'range'];
-                angular.forEach(watchers, function (prop) {
-                    $scope.$watch(prop, function () {
-                        initSlider();
-                    });
+                var watchValues = ['min', 'max', 'step', 'range', 'ticksSnapBounds'];
+                var watchCollections = ['ticks', 'ticksPositions', 'ticksLabels'];
+                angular.forEach(watchValues, function (prop) {
+                    $scope.$watch(prop, initSlider);
+                });
+                angular.forEach(watchCollections, function (prop) {
+                    $scope.$watchCollection(prop, initSlider);
                 });
             }
         };
